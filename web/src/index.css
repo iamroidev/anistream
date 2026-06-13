@@ -596,6 +596,10 @@ body,
   transform: scale(1.2);
 }
 
+.hero-spotlight__dot:hover {
+  background: rgba(250, 249, 246, 0.7);
+}
+
 .hero-spotlight__shade {
   position: absolute;
   inset: 0;
