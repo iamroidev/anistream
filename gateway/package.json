@@ -1,0 +1,21 @@
+{
+  "name": "anistream-gateway",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js"
+  },
+  "dependencies": {
+    "@consumet/extensions": "^1.8.8",
+    "@hono/node-server": "^1.13.7",
+    "aniwatch": "^2.27.9",
+    "hono": "^4.6.12"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

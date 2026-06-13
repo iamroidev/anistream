@@ -1,0 +1,32 @@
+services:
+  animetsu:
+    build:
+      context: ./services/animetsu-src
+    restart: unless-stopped
+    expose:
+      - "8080"
+
+  gateway:
+    build: ./gateway
+    restart: unless-stopped
+    expose:
+      - "8787"
+    environment:
+      PORT: 8787
+      JIKAN_URL: https://api.jikan.moe/v4
+      ANIMETSU_URL: http://animetsu:8080
+      PUBLIC_URL: ${PUBLIC_URL:-http://localhost}
+      CORS_ORIGIN: ${CORS_ORIGIN:-*}
+    depends_on:
+      - animetsu
+
+  web:
+    build:
+      context: ./web
+      args:
+        VITE_API_URL: ""
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - gateway
