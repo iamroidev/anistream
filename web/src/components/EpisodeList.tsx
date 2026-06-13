@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Episode } from "../api";
+import { episodeReleaseLabel } from "../lib/formatAirDate";
 import { EpisodePagination } from "./EpisodePagination";
 import { LuxuryButton } from "./ui/LuxuryButton";
 
@@ -105,7 +106,9 @@ function EpisodeTile({ ep, href }: { ep: Episode; href: string | null }) {
       <span className="episode-tile__num">{String(ep.number).padStart(2, "0")}</span>
       <span className="episode-tile__title">{ep.title || `Episode ${ep.number}`}</span>
       <span className="episode-tile__meta">
-        {!streamable && <span className="episode-tile__tag">Soon</span>}
+        {!streamable && (
+          <span className="episode-tile__tag">{episodeReleaseLabel(ep.airDate)}</span>
+        )}
         {ep.isFiller && <span className="episode-tile__tag">Filler</span>}
         {streamable && <span className="episode-tile__play" aria-hidden />}
       </span>
@@ -177,7 +180,7 @@ function EpisodeDetailRow({
           </Link>
         ) : (
           <span className="font-sans text-[0.65rem] uppercase tracking-widest text-taupe px-2">
-            Soon
+            {episodeReleaseLabel(ep.airDate)}
           </span>
         )}
       </div>

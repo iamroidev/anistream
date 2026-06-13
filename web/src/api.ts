@@ -76,6 +76,9 @@ export interface EpisodesResponse {
 export interface CatalogAnime extends JikanAnime {
   anilist_id: number;
   banner_image: string | null;
+  start_date?: string | null;
+  next_airing_at?: string | null;
+  next_airing_episode?: number | null;
 }
 
 export interface CuratedHome {

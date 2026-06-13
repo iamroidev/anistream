@@ -8,6 +8,12 @@ interface AniListTitle {
   native: string | null;
 }
 
+interface AniListFuzzyDate {
+  year: number | null;
+  month: number | null;
+  day: number | null;
+}
+
 interface AniListMedia {
   id: number;
   idMal: number | null;
@@ -20,11 +26,16 @@ interface AniListMedia {
   status: string | null;
   genres: string[] | null;
   seasonYear: number | null;
+  startDate?: AniListFuzzyDate | null;
+  nextAiringEpisode?: { episode: number | null; airingAt: number | null } | null;
 }
 
 export interface CatalogAnime extends JikanAnime {
   anilist_id: number;
   banner_image: string | null;
+  start_date?: string | null;
+  next_airing_at?: string | null;
+  next_airing_episode?: number | null;
 }
 
 const MEDIA_FIELDS = `
@@ -39,7 +50,17 @@ const MEDIA_FIELDS = `
   status
   genres
   seasonYear
+  startDate { year month day }
+  nextAiringEpisode { episode airingAt }
 `;
+
+function fuzzyDateToIso(date: AniListFuzzyDate | null | undefined): string | null {
+  if (!date?.year) return null;
+  const month = date.month ?? 1;
+  const day = date.day ?? 1;
+  const iso = new Date(Date.UTC(date.year, month - 1, day)).toISOString();
+  return iso;
+}
 
 async function anilistQuery<T>(query: string, variables?: Record<string, unknown>): Promise<T> {
   const res = await fetch(ANILIST_URL, {
@@ -84,6 +105,12 @@ function toCatalog(media: AniListMedia): CatalogAnime | null {
     episodes: media.episodes,
     status: media.status ?? "",
     genres: (media.genres ?? []).map((name) => ({ name })),
+    start_date: fuzzyDateToIso(media.startDate),
+    next_airing_at:
+      media.nextAiringEpisode?.airingAt != null
+        ? new Date(media.nextAiringEpisode.airingAt * 1000).toISOString()
+        : null,
+    next_airing_episode: media.nextAiringEpisode?.episode ?? null,
   };
 }
 

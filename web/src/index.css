@@ -541,6 +541,59 @@ body,
   height: 100%;
   object-fit: cover;
   animation: hero-zoom 24s ease-in-out infinite alternate;
+  transition: opacity 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.hero-spotlight__bg--in {
+  opacity: 1;
+}
+
+.hero-spotlight__bg--out {
+  opacity: 0;
+}
+
+.hero-spotlight__content {
+  position: relative;
+  z-index: 1;
+  max-width: 560px;
+  padding: 2.5rem 2rem;
+  color: #faf9f6;
+  transition: opacity 0.38s cubic-bezier(0.25, 1, 0.5, 1), transform 0.38s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.hero-spotlight__content--in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hero-spotlight__content--out {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+.hero-spotlight__dots {
+  position: absolute;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 2;
+  display: flex;
+  gap: 0.45rem;
+}
+
+.hero-spotlight__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  border: none;
+  padding: 0;
+  background: rgba(250, 249, 246, 0.35);
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.hero-spotlight__dot--active {
+  background: var(--accent);
+  transform: scale(1.2);
 }
 
 .hero-spotlight__shade {
@@ -552,14 +605,6 @@ body,
     rgba(20, 18, 16, 0.72) 45%,
     rgba(20, 18, 16, 0.25) 100%
   );
-}
-
-.hero-spotlight__content {
-  position: relative;
-  z-index: 1;
-  max-width: 560px;
-  padding: 2.5rem 2rem;
-  color: #faf9f6;
 }
 
 .hero-spotlight__eyebrow {

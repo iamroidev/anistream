@@ -5,6 +5,7 @@ import { CatalogCard } from "../components/CatalogCard";
 import { EditorialCard } from "../components/ui/EditorialCard";
 import { LuxuryButton } from "../components/ui/LuxuryButton";
 import { api, CatalogAnime } from "../api";
+import { formatPremiereDate } from "../lib/formatAirDate";
 
 const SECTION_LABELS: Record<string, string> = {
   trending: "Trending Now",
@@ -77,7 +78,15 @@ export default function BrowsePage() {
       {!loading && !error && (
         <div className="browse-grid">
           {items.map((anime) => (
-            <CatalogCard key={`${section}-${anime.anilist_id || anime.mal_id}`} anime={anime} />
+            <CatalogCard
+              key={`${section}-${anime.anilist_id || anime.mal_id}`}
+              anime={anime}
+              badge={
+                section === "upcoming"
+                  ? formatPremiereDate(anime.start_date ?? anime.next_airing_at) ?? undefined
+                  : undefined
+              }
+            />
           ))}
         </div>
       )}

@@ -8,6 +8,7 @@ import { ContinueWatchingRow } from "../components/ContinueWatchingRow";
 import { EditorialCard } from "../components/ui/EditorialCard";
 import { LuxuryButton } from "../components/ui/LuxuryButton";
 import { api, CuratedHome } from "../api";
+import { formatPremiereDate } from "../lib/formatAirDate";
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -29,11 +30,16 @@ export default function HomePage() {
     load();
   }, []);
 
-  const featured = data?.spotlight[0] ?? data?.trending[0] ?? null;
+  const spotlightItems =
+    data?.spotlight?.length
+      ? data.spotlight
+      : data?.trending?.length
+        ? data.trending.slice(0, 8)
+        : [];
 
   return (
     <Shell wide>
-      <HeroSpotlight featured={featured} />
+      <HeroSpotlight items={spotlightItems} />
 
       <div className="home-search-band">
         <SearchBar onSearch={(q) => navigate(`/search?q=${encodeURIComponent(q)}`)} />
@@ -100,7 +106,9 @@ export default function HomePage() {
             subtitle="Upcoming premieres to add to your list."
             items={data.upcoming}
             section="upcoming"
-            badgeFor={() => "Soon"}
+            badgeFor={(a) =>
+              formatPremiereDate(a.start_date ?? a.next_airing_at) ?? undefined
+            }
           />
 
           <CatalogRow
