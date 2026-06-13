@@ -33,7 +33,6 @@ export default function SearchPage() {
   return (
     <Shell>
       <EditorialCard
-        tagline="Discover"
         title={q ? `Results for “${q}”` : "Search the Catalog"}
         className="mb-10"
       >
@@ -57,10 +56,9 @@ export default function SearchPage() {
 
       {!loading && streams.length > 0 && (
         <section className="mb-12">
-          <div className="card-divider pb-4 mb-6">
-            <p className="editorial-tagline mb-1">Available to Stream</p>
-            <h2 className="editorial-heading text-xl font-semibold m-0">Watch Now</h2>
-          </div>
+          <h2 className="editorial-heading text-xl font-semibold m-0 card-divider pb-4 mb-6">
+            Available to Stream
+          </h2>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
             {streams.map((a) => (
               <StreamAnimeCard
@@ -78,10 +76,9 @@ export default function SearchPage() {
 
       {!loading && metadata.length > 0 && (
         <section>
-          <div className="card-divider pb-4 mb-6">
-            <p className="editorial-tagline mb-1">MyAnimeList</p>
-            <h2 className="editorial-heading text-xl font-semibold m-0">Browse Catalog</h2>
-          </div>
+          <h2 className="editorial-heading text-xl font-semibold m-0 card-divider pb-4 mb-6">
+            Catalog
+          </h2>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
             {metadata.map((a) => (
               <ResolvableAnimeCard

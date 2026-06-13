@@ -124,7 +124,7 @@ export default function AnimePage() {
 
             <div className="flex flex-wrap gap-3">
               {firstEp && (
-                <Link to={watchUrl(id, firstEp.episodeId, firstEp.number, provider)}>
+                <Link to={watchUrl(id!, firstEp.episodeId, firstEp.number, provider)}>
                   <LuxuryButton>Watch Episode 1</LuxuryButton>
                 </Link>
               )}
@@ -152,7 +152,7 @@ export default function AnimePage() {
                 {ep.isFiller && <span className="ml-2 badge-pill">Filler</span>}
               </div>
               <div className="flex gap-2 shrink-0">
-                <Link to={watchUrl(id, ep.episodeId, ep.number, provider)}>
+                <Link to={watchUrl(id!, ep.episodeId, ep.number, provider)}>
                   <LuxuryButton variant="primary" className="!py-2 !px-4 !text-[0.65rem]">
                     Stream
                   </LuxuryButton>

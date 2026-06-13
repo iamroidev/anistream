@@ -3,8 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { Shell, SearchBar } from "../components/Layout";
 import { ResolvableAnimeCard } from "../components/AnimeCards";
 import { EditorialCard } from "../components/ui/EditorialCard";
-import { MetricCard } from "../components/ui/MetricCard";
-import { BadgePill } from "../components/ui/BadgePill";
 import { api, JikanAnime } from "../api";
 
 export default function HomePage() {
@@ -25,25 +23,12 @@ export default function HomePage() {
 
   return (
     <Shell>
-      <EditorialCard tagline="Personal Cinema" title="Curated Anime Collection" className="mb-10">
+      <EditorialCard title="Curated Anime Collection" className="mb-10">
         <p className="font-sans text-sm text-taupe leading-relaxed max-w-2xl mb-8">
-          Click any title to open its detail page — stream episodes in-browser or save for offline.
+          Stream in-browser or save for offline — click any title for episodes.
         </p>
-        <div className="flex flex-wrap items-center gap-3 mb-8">
-          <BadgePill variant="live">Streaming</BadgePill>
-          <BadgePill>Downloads</BadgePill>
-          <BadgePill>Self-Hosted</BadgePill>
-        </div>
         <SearchBar onSearch={(q) => navigate(`/search?q=${encodeURIComponent(q)}`)} />
       </EditorialCard>
-
-      {!loading && (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
-          <MetricCard label="This Season" value={season.length} />
-          <MetricCard label="Top Rated" value={top.length} />
-          <MetricCard label="Sources" value="3" />
-        </div>
-      )}
 
       {loading ? (
         <div className="flex justify-center py-16">
@@ -51,8 +36,8 @@ export default function HomePage() {
         </div>
       ) : (
         <>
-          <CatalogSection tagline="Now Airing" title="This Season" items={season} />
-          <CatalogSection tagline="Editor's Picks" title="Top Rated" items={top} className="mt-12" />
+          <CatalogSection title="This Season" items={season} />
+          <CatalogSection title="Top Rated" items={top} className="mt-12" />
         </>
       )}
     </Shell>
@@ -60,22 +45,17 @@ export default function HomePage() {
 }
 
 function CatalogSection({
-  tagline,
   title,
   items,
   className = "",
 }: {
-  tagline: string;
   title: string;
   items: JikanAnime[];
   className?: string;
 }) {
   return (
     <section className={className}>
-      <div className="card-divider pb-4 mb-6">
-        <p className="editorial-tagline mb-1">{tagline}</p>
-        <h2 className="editorial-heading text-xl font-semibold m-0">{title}</h2>
-      </div>
+      <h2 className="editorial-heading text-xl font-semibold m-0 card-divider pb-4 mb-6">{title}</h2>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
         {items.map((a) => (
           <ResolvableAnimeCard

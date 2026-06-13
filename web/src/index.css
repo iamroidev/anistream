@@ -318,35 +318,14 @@ body {
 }
 
 .nav-theme {
-  display: none;
+  display: flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.25rem 0.5rem;
   border: 1px solid var(--border-color);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.55);
-}
-
-@media (min-width: 900px) {
-  .nav-theme {
-    display: flex;
-  }
-  .nav-theme-mobile {
-    display: none;
-  }
-}
-
-.nav-theme-mobile {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.35rem 0.75rem;
-  border: 1px solid var(--border-color);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.55);
-  max-width: 1100px;
-  width: 100%;
-  justify-content: center;
+  margin-left: auto;
 }
 
 .nav-theme-label {
