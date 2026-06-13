@@ -1,7 +1,10 @@
+import { useLocation } from "react-router-dom";
 import { TopNav } from "./TopNav";
 import { LuxuryButton } from "./ui/LuxuryButton";
 
-export function Shell({ children }: { children: React.ReactNode }) {
+export function Shell({ children, wide = false }: { children: React.ReactNode; wide?: boolean }) {
+  const location = useLocation();
+
   return (
     <div className="relative min-h-screen">
       <div className="accent-stripe" aria-hidden />
@@ -10,7 +13,14 @@ export function Shell({ children }: { children: React.ReactNode }) {
 
       <TopNav />
 
-      <main className="relative z-10 mx-auto max-w-6xl px-4 py-8 md:py-12">{children}</main>
+      <main
+        key={location.pathname}
+        className={`page-enter relative z-10 mx-auto px-4 py-8 md:py-12 ${
+          wide ? "max-w-[1400px]" : "max-w-6xl"
+        }`}
+      >
+        {children}
+      </main>
     </div>
   );
 }

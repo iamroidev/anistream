@@ -1,73 +1,119 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Shell, SearchBar } from "../components/Layout";
-import { ResolvableAnimeCard } from "../components/AnimeCards";
+import { HeroSpotlight } from "../components/HeroSpotlight";
+import { CatalogRow } from "../components/CatalogRow";
+import { GenreRail } from "../components/GenreRail";
+import { ContinueWatchingRow } from "../components/ContinueWatchingRow";
 import { EditorialCard } from "../components/ui/EditorialCard";
-import { api, JikanAnime } from "../api";
+import { LuxuryButton } from "../components/ui/LuxuryButton";
+import { api, CuratedHome } from "../api";
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const [season, setSeason] = useState<JikanAnime[]>([]);
-  const [top, setTop] = useState<JikanAnime[]>([]);
+  const [data, setData] = useState<CuratedHome | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  function load() {
+    setLoading(true);
+    setLoadError(null);
+    api
+      .curatedHome()
+      .then(setData)
+      .catch((e) => setLoadError(String(e)))
+      .finally(() => setLoading(false));
+  }
 
   useEffect(() => {
-    Promise.all([api.seasonNow(), api.topAnime()])
-      .then(([s, t]) => {
-        setSeason(s.data);
-        setTop(t.data);
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
+    load();
   }, []);
 
+  const featured = data?.spotlight[0] ?? data?.trending[0] ?? null;
+
   return (
-    <Shell>
-      <EditorialCard title="Curated Anime Collection" className="mb-10">
-        <p className="font-sans text-sm text-taupe leading-relaxed max-w-2xl mb-8">
-          Stream in-browser or save for offline — click any title for episodes.
-        </p>
+    <Shell wide>
+      <HeroSpotlight featured={featured} />
+
+      <div className="home-search-band">
         <SearchBar onSearch={(q) => navigate(`/search?q=${encodeURIComponent(q)}`)} />
-      </EditorialCard>
+      </div>
 
       {loading ? (
-        <div className="flex justify-center py-16">
-          <span className="spinner spinner--dark" />
+        <div className="home-sections">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="space-y-3">
+              <div className="loading-shimmer h-5 w-48" />
+              <div className="flex gap-3 overflow-hidden">
+                {[1, 2, 3, 4, 5, 6].map((j) => (
+                  <div key={j} className="loading-shimmer h-[220px] w-[150px] shrink-0" />
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
-      ) : (
-        <>
-          <CatalogSection title="This Season" items={season} />
-          <CatalogSection title="Top Rated" items={top} className="mt-12" />
-        </>
-      )}
-    </Shell>
-  );
-}
+      ) : loadError ? (
+        <EditorialCard title="Could not load catalog" className="mt-8">
+          <p className="font-sans text-sm text-taupe mb-4">{loadError}</p>
+          <LuxuryButton variant="secondary" onClick={load}>
+            Retry
+          </LuxuryButton>
+        </EditorialCard>
+      ) : data ? (
+        <div className="home-sections">
+          <ContinueWatchingRow />
 
-function CatalogSection({
-  title,
-  items,
-  className = "",
-}: {
-  title: string;
-  items: JikanAnime[];
-  className?: string;
-}) {
-  return (
-    <section className={className}>
-      <h2 className="editorial-heading text-xl font-semibold m-0 card-divider pb-4 mb-6">{title}</h2>
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-        {items.map((a) => (
-          <ResolvableAnimeCard
-            key={a.mal_id}
-            malId={a.mal_id}
-            title={a.title_english || a.title}
-            image={a.images.jpg.large_image_url}
-            score={a.score}
-            badge={a.score && a.score >= 8 ? "Top" : undefined}
+          <CatalogRow
+            title="Trending Now"
+            subtitle="What everyone is watching this week."
+            items={data.trending}
+            section="trending"
+            badgeFor={(a) => (a.score && a.score >= 8.5 ? "Hot" : undefined)}
           />
-        ))}
-      </div>
-    </section>
+
+          <CatalogRow
+            title="Popular"
+            subtitle="All-time fan favorites."
+            items={data.popular}
+            section="popular"
+          />
+
+          <CatalogRow
+            title="New Episodes"
+            subtitle="Currently airing simulcasts."
+            items={data.recent}
+            section="recent"
+            badgeFor={(a) =>
+              a.status?.toLowerCase().includes("releasing") ? "Simulcast" : undefined
+            }
+          />
+
+          <CatalogRow
+            title="This Season"
+            subtitle="Fresh picks from the current cour."
+            items={data.season}
+            section="season"
+          />
+
+          <CatalogRow
+            title="Coming Soon"
+            subtitle="Upcoming premieres to add to your list."
+            items={data.upcoming}
+            section="upcoming"
+            badgeFor={() => "Soon"}
+          />
+
+          <CatalogRow
+            title="Top Rated"
+            subtitle="Critics and community darlings."
+            items={data.top}
+            section="top"
+            badgeFor={(a) => (a.score && a.score >= 8 ? "Top" : undefined)}
+          />
+
+          <GenreRail genres={data.genres} />
+        </div>
+      ) : null}
+    </Shell>
   );
 }

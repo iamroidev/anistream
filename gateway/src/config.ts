@@ -4,6 +4,13 @@ export const config = {
   aniwatchUrl: process.env.ANIWATCH_URL ?? "http://localhost:4000",
   consumetUrl: process.env.CONSUMET_URL ?? "http://localhost:3000",
   animetsuUrl: process.env.ANIMETSU_URL ?? "http://localhost:8080",
+  anipubUrl: process.env.ANIPUB_URL ?? "https://anipub.xyz",
+  miruroUrl: process.env.MIRURO_URL ?? "http://localhost:8000",
+  miruroApiKey: process.env.MIRURO_API_KEY ?? "anistream-local-miruro-key",
+  zenshinUrl: process.env.ZENSHIN_URL ?? "https://zenshin-supabase-api.onrender.com",
+  zenshinUrlFallback:
+    process.env.ZENSHIN_URL_FALLBACK ?? "https://zenshin-supabase-api-myig.onrender.com",
+  preferEmbed: process.env.STREAM_PREFER_EMBED === "true",
   publicUrl: process.env.PUBLIC_URL ?? "http://localhost:8787",
   corsOrigin: process.env.CORS_ORIGIN ?? "*",
 };

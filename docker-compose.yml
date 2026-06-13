@@ -1,10 +1,33 @@
 services:
+  miruro:
+    build: ./services/miruro
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      API_KEY: ${MIRURO_API_KEY:-anistream-local-miruro-key}
+
+  consumet:
+    build: ./services/consumet
+    restart: unless-stopped
+    expose:
+      - "3000"
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: PROD
+      PORT: 3000
+      ENABLE_ANIMEPAHE: ${ENABLE_ANIMEPAHE:-false}
+      ANIMEPAHE_BASE_URL: ${ANIMEPAHE_BASE_URL:-https://animepahe.com}
+
   animetsu:
     build:
       context: ./services/animetsu-src
     restart: unless-stopped
     expose:
       - "8080"
+    ports:
+      - "8080:8080"
 
   gateway:
     build: ./gateway
@@ -15,9 +38,16 @@ services:
       PORT: 8787
       JIKAN_URL: https://api.jikan.moe/v4
       ANIMETSU_URL: http://animetsu:8080
+      CONSUMET_URL: http://consumet:3000
+      MIRURO_URL: http://miruro:8000
+      MIRURO_API_KEY: ${MIRURO_API_KEY:-anistream-local-miruro-key}
+      STREAM_PREFER_EMBED: ${STREAM_PREFER_EMBED:-false}
+      ANIPUB_URL: https://anipub.xyz
       PUBLIC_URL: ${PUBLIC_URL:-http://localhost}
       CORS_ORIGIN: ${CORS_ORIGIN:-*}
     depends_on:
+      - miruro
+      - consumet
       - animetsu
 
   web:

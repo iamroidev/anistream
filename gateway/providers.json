@@ -1,0 +1,27 @@
+{
+  "_comment": "Reference for manual domain updates. Gateway reads gateway/src/provider-config.ts and env vars at runtime.",
+  "primary": ["miruro", "anipub"],
+  "consumet": {
+    "animepahe": {
+      "enabled": false,
+      "baseUrl": "https://animepahe.com",
+      "fallbackUrls": ["https://animepahe.org", "https://animepahe.si"],
+      "note": "Cloudflare challenge — needs browser cookies or FlareSolverr; set ENABLE_ANIMEPAHE=true to attempt"
+    },
+    "hianime": {
+      "enabled": false,
+      "note": "Shut down March 2026"
+    },
+    "animekai": {
+      "enabled": false,
+      "baseUrl": "https://animekai.to",
+      "note": "Domain rotates — update ANIMEKAI_BASE_URL when a mirror is confirmed live"
+    },
+    "kickassanime": {
+      "enabled": false,
+      "note": "Stale — not worth maintaining"
+    }
+  },
+  "metadata": ["jikan", "anilist", "zenshin"],
+  "telegramPipeline": "not integrated — rips flow Nyaa/fansubs → mirrors → embed sites we scrape"
+}

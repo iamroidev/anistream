@@ -2,15 +2,34 @@ import {
   getStreamProvider,
   providerOrder,
   tryEachProvider,
+  animepaheSearch,
   type StreamProvider,
 } from "../providers.js";
+import { proxyImageUrl } from "../proxy.js";
+import { withTimeout } from "../timeout.js";
+
+const PROVIDER_SEARCH_MS = 8_000;
 
 export async function consumetSearch(provider: string, q: string) {
+  if (provider === "animepahe") {
+    const hit = await animepaheSearch(q);
+    if (!hit) return { results: [] };
+    return {
+      results: hit.results.map((r) => ({
+        id: r.id,
+        title: r.title,
+        image: r.image,
+        url: r.url,
+      })),
+    };
+  }
+
   const p = getStreamProvider(provider);
-  if (!p) throw new Error(`Unknown provider: ${provider}`);
+  if (!p) throw new Error(`Provider disabled or unknown: ${provider}`);
   const results = await p.search(q);
+  const items = results?.results ?? [];
   return {
-    results: results.results.map((r) => ({
+    results: items.map((r) => ({
       id: r.id,
       title: r.title,
       image: r.image,
@@ -20,11 +39,22 @@ export async function consumetSearch(provider: string, q: string) {
 }
 
 export async function consumetSearchAny(q: string, preferred?: string) {
-  const hit = await tryEachProvider(providerOrder(preferred), async (provider) => {
-    const data = await consumetSearch(provider, q);
-    return data.results.length > 0 ? { provider, results: data.results } : null;
-  });
-  return hit;
+  const providers = providerOrder(preferred);
+  const settled = await Promise.allSettled(
+    providers.map((provider) =>
+      withTimeout(consumetSearch(provider, q), PROVIDER_SEARCH_MS, provider).then((data) =>
+        data.results.length > 0 ? { provider, results: data.results } : null
+      )
+    )
+  );
+
+  for (const provider of providers) {
+    const result = settled[providers.indexOf(provider)];
+    if (result.status === "fulfilled" && result.value) {
+      return { provider: result.value.provider, value: result.value };
+    }
+  }
+  return null;
 }
 
 export async function consumetInfo(provider: string, id: string) {
@@ -83,16 +113,21 @@ export async function consumetWatchAny(episodeId: string, preferred?: string) {
   });
 }
 
-export function toAnimeInfoResponse(
-  info: Awaited<ReturnType<typeof consumetInfo>>,
-  provider: StreamProvider
-) {
+type ConsumetInfoShape = {
+  id: string;
+  title: string;
+  image?: string;
+  description?: string;
+  episodes: { id: string; number: number; title?: string }[];
+};
+
+export function toAnimeInfoResponse(info: ConsumetInfoShape, provider: StreamProvider) {
   return {
     anime: {
       info: {
         id: info.id,
         name: info.title,
-        poster: info.image ?? "",
+        poster: proxyImageUrl(info.image ?? ""),
         description: info.description ?? "",
         stats: {
           rating: "—",
@@ -106,7 +141,7 @@ export function toAnimeInfoResponse(
   };
 }
 
-export function toEpisodesResponse(info: Awaited<ReturnType<typeof consumetInfo>>) {
+export function toEpisodesResponse(info: ConsumetInfoShape) {
   return {
     episodes: info.episodes.map((ep) => ({
       episodeId: ep.id,

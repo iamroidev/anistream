@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import BrowsePage from "./pages/BrowsePage";
 import HomePage from "./pages/HomePage";
 import SearchPage from "./pages/SearchPage";
 import AnimePage from "./pages/AnimePage";
@@ -8,6 +9,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
+      <Route path="/browse/:section" element={<BrowsePage />} />
       <Route path="/search" element={<SearchPage />} />
       <Route path="/anime/:id" element={<AnimePage />} />
       <Route path="/watch/:animeId/:episodeId" element={<WatchPage />} />

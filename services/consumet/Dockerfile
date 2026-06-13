@@ -1,8 +1,8 @@
 FROM node:20-alpine
 WORKDIR /app
-RUN apk add --no-cache git
-RUN git clone --depth 1 https://github.com/consumet/api.consumet.org.git .
-RUN npm install
+COPY package.json ./
+RUN npm install --omit=dev
+COPY server.mjs ./
 ENV NODE_ENV=PROD
 ENV PORT=3000
 EXPOSE 3000

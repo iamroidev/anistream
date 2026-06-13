@@ -1,0 +1,14 @@
+{
+  "name": "anistream",
+  "private": true,
+  "version": "1.0.0",
+  "description": "AniStream — one-command Docker stack",
+  "scripts": {
+    "start": "docker compose up -d --build",
+    "stop": "docker compose down",
+    "restart": "docker compose restart",
+    "logs": "docker compose logs -f --tail=100",
+    "status": "docker compose ps",
+    "open": "node -e \"require('child_process').exec(process.platform==='win32'?'start http://localhost':'open http://localhost')\""
+  }
+}

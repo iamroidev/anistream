@@ -67,6 +67,7 @@ export default function SearchPage() {
                 title={a.name}
                 image={a.poster}
                 provider={a.provider}
+                malId={a.malId}
                 badge="Stream"
               />
             ))}

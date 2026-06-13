@@ -6,8 +6,14 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      "/api": "http://localhost:8787",
-      "/proxy": "http://localhost:8787",
+      "/api": {
+        target: "http://localhost:8787",
+        timeout: 90000,
+      },
+      "/proxy": {
+        target: "http://localhost:8787",
+        timeout: 90000,
+      },
       "/health": "http://localhost:8787",
     },
   },
